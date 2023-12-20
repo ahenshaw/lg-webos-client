@@ -11,6 +11,7 @@ pub struct CommandRequest {
 }
 
 pub enum Command {
+    SendEnterKey,
     CreateToast(String),
     OpenBrowser(String),
     TurnOff,
@@ -18,6 +19,8 @@ pub enum Command {
     SetInput(String),
     SetMute(bool),
     SetVolume(i8),
+    VolumeUp,
+    VolumeDown,
     GetChannelList,
     GetCurrentChannel,
     OpenChannel(String),
@@ -46,6 +49,13 @@ pub struct CommandResponse {
 
 pub fn create_command(id: String, cmd: Command) -> CommandRequest {
     match cmd {
+        Command::SendEnterKey => CommandRequest {
+            id,
+            r#type: String::from("request"),
+            uri: String::from("ssap://com.webos.service.ime/sendEnterKey"),
+            payload: None,
+        },
+
         Command::CreateToast(text) => CommandRequest {
             id,
             r#type: String::from("request"),
@@ -87,6 +97,18 @@ pub fn create_command(id: String, cmd: Command) -> CommandRequest {
             r#type: String::from("request"),
             uri: String::from("ssap://audio/setVolume"),
             payload: Some(json!({ "volume": volume })),
+        },
+        Command::VolumeUp => CommandRequest {
+            id,
+            r#type: String::from("request"),
+            uri: String::from("ssap://audio/volumeUp"),
+            payload: None,
+        },
+        Command::VolumeDown => CommandRequest {
+            id,
+            r#type: String::from("request"),
+            uri: String::from("ssap://audio/volumeDown"),
+            payload: None,
         },
         Command::GetChannelList => CommandRequest {
             id,
