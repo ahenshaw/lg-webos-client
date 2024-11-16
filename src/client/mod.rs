@@ -1,3 +1,5 @@
+use futures::channel::oneshot;
+use futures::channel::oneshot::{Receiver, Sender};
 use futures::{Sink, Stream, StreamExt};
 use futures_util::lock::Mutex;
 use futures_util::stream::SplitSink;
@@ -8,8 +10,6 @@ use futures_util::{
 use log::debug;
 use serde_json::Value;
 use std::{collections::HashMap, sync::Arc};
-use futures::channel::oneshot;
-use futures::channel::oneshot::{Receiver, Sender};
 use tokio_tungstenite::tungstenite::Error;
 use tokio_tungstenite::{
     connect_async, tungstenite::protocol::Message, MaybeTlsStream, WebSocketStream,
@@ -63,7 +63,10 @@ impl Clone for WebOsClientConfig {
     }
 }
 
-impl WebosClient<SplitSink<WebSocketStream<MaybeTlsStream<tokio::net::TcpStream>>, Message>> {
+pub type WebosClientType =
+    SplitSink<WebSocketStream<MaybeTlsStream<tokio::net::TcpStream>>, Message>;
+// impl WebosClient<SplitSink<WebSocketStream<MaybeTlsStream<tokio::net::TcpStream>>, Message>> {
+impl WebosClient<WebosClientType> {
     /// Creates client connected to device with given address
     pub async fn new(config: WebOsClientConfig) -> Result<Self, ClientError> {
         let url = url::Url::parse(&config.address).map_err(|_| ClientError::MalformedUrl)?;

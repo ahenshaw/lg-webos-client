@@ -11,6 +11,7 @@ pub struct CommandRequest {
 }
 
 pub enum Command {
+    Up,
     SendEnterKey,
     CreateToast(String),
     OpenBrowser(String),
@@ -49,6 +50,12 @@ pub struct CommandResponse {
 
 pub fn create_command(id: String, cmd: Command) -> CommandRequest {
     match cmd {
+        Command::Up => CommandRequest {
+            id,
+            r#type: String::from("request"),
+            uri: String::from("ssap://com.webos.service.ime/sendEnterKey"),
+            payload: None,
+        },
         Command::SendEnterKey => CommandRequest {
             id,
             r#type: String::from("request"),
